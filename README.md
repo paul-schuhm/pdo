@@ -11,7 +11,7 @@ Une démo de l'extension PDO en PHP pour interagir avec des bases de données re
   - [Utiliser les transactions](#utiliser-les-transactions)
   - [Accéder à la démo](#accéder-à-la-démo)
   - [En résumé](#en-résumé)
-  - [Liens utiles](#liens-utiles)
+  - [Références](#références)
 
 
 ## Installation
@@ -94,29 +94,32 @@ Pour consulter les résultats, l'objet de type `PDOStatement` offre plusieurs **
 
 [Les méthodes de `PDO`](https://www.php.net/manual/fr/class.pdo.php) **à connaître** :
 
-- `exec()`
-- `query()`, retourne un `PDOStatement`
-- `prepare()`, retourne un `PDOStatement`
-- `commit()`
-- `rollback()`
+- `exec()`;
+- `query()`, retourne un `PDOStatement`;
+- `prepare()`, retourne un `PDOStatement`;
+- `commit()`;
+- `rollback()`.
 
 [Les méthodes de `PDOStatement`](https://www.php.net/manual/fr/class.pdostatement.php) **à connaître** :
 
-- bindValue()
-- execute()
-- fetch()
-- fetchAll()
-- fetchObject()
+- `bindColumn()`;
+- `bindParam()`;
+- `bindValue()`;
+- `execute()`;
+- `fetch()`;
+- `fetchAll()`;
+- `fetchObject()`.
 
 [Les modes de récupération (constantes)](https://www.php.net/manual/fr/pdo.constants.php) **à connaître** :
 
-- PDO::FETCH_BOTH
-- PDO::FETCH_ASSOC
+- `PDO::FETCH_BOTH` (défaut);
+- `PDO::FETCH_ASSOC`;
+- `PDO::FETCH_UNIQUE`;
+- `PDO::FETCH_CLASS` (ORM);
 
-## Liens utiles
+## Références
 
-
-- [PHP Data Objects](https://www.php.net/manual/fr/book.pdo.php)
-- [Constantes pré-définies](https://www.php.net/manual/fr/pdo.constants.php)
-- [Connexions et gestionnaire de connexion](https://www.php.net/manual/fr/pdo.connections.php), documentation sur la gestion des connexions notamment des [connexions persistantes](https://www.php.net/manual/fr/pdo.constants.php#pdo.constants.attr-persistent)
+- [PHP Data Objects](https://www.php.net/manual/fr/book.pdo.php);
+- [Constantes pré-définies par le module PDO](https://www.php.net/manual/fr/pdo.constants.php), documente notamment les différents modes de récupération des données (`FETCH_*`);
+- [Connexions et gestionnaire de connexion](https://www.php.net/manual/fr/pdo.connections.php), documentation sur la gestion des connexions notamment des [connexions persistantes](https://www.php.net/manual/fr/pdo.constants.php#pdo.constants.attr-persistent);
 - [SQLite - Documentation](https://www.sqlite.org/docs.html)
