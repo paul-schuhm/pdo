@@ -178,10 +178,10 @@ Pour consulter les résultats, l'objet de type `PDOStatement` offre plusieurs **
 
 ## Références
 
-- [PHP Data Objects](https://www.php.net/manual/fr/book.pdo.php);
+- [PHP Data Objects](https://www.php.net/manual/fr/book.pdo.php), documentation officielle du module PDO;
 - [Constantes pré-définies par le module PDO](https://www.php.net/manual/fr/pdo.constants.php), documente notamment les différents modes de récupération des données (`FETCH_*`);
 - [PDOStatement::fetch](https://www.php.net/manual/en/pdostatement.fetch.php#example-1053), documentation des différents modes de récupération des données;
 - [Connexions et gestionnaire de connexion](https://www.php.net/manual/fr/pdo.connections.php), documentation sur la gestion des connexions notamment des [connexions persistantes](https://www.php.net/manual/fr/pdo.constants.php#pdo.constants.attr-persistent);
-- [PDO : Les erreurs et leur gestion](https://www.php.net/manual/fr/pdo.error-handling.php)
+- [PDO : Les erreurs et leur gestion](https://www.php.net/manual/fr/pdo.error-handling.php);
 - [(The only proper) PDO tutorial](https://phpdelusions.net/pdo), un très bon site (maintenu) qui propose des tutoriels pour mieux comprendre le module PDO (la documentation n'est en effet pas toujours complète et explicite sur les différents paramètres du module);
-- [SQLite - Documentation](https://www.sqlite.org/docs.html)
+- [SQLite - Documentation](https://www.sqlite.org/docs.html), documentation officielle de SQLite.
