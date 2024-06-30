@@ -7,6 +7,7 @@ Une démo de l'extension PDO en PHP pour interagir avec des bases de données re
   - [Ouvrir une connexion (avec SQLite)](#ouvrir-une-connexion-avec-sqlite)
   - [Classes de l'extension PDO](#classes-de-lextension-pdo)
   - [Executer des requêtes SQL](#executer-des-requêtes-sql)
+  - [Parcourir les résultats](#parcourir-les-résultats)
   - [Executer des requêtes préparées (en deux temps)](#executer-des-requêtes-préparées-en-deux-temps)
   - [Utiliser les transactions](#utiliser-les-transactions)
   - [Accéder à la démo](#accéder-à-la-démo)
@@ -57,15 +58,62 @@ L'extension `pdo` définit les classes suivantes **à connaître** :
 
 ~~~php
 $result = $pdo->exec("CREATE TABLE IF NOT EXISTS Article(id INT, title VARCHAR(255), body TEXT)");
+$sql = <<< SQL
+INSERT INTO Article(id, title, body) 
+VALUES (1, 'Foo', 'Lorem ipsum'), 
+(2, 'Bar', 'Lorem ipsum'), 
+(3, 'Baz', 'Lorem ipsum'),
+(4, 'Foo', 'Lorem ipsum')
+SQL;
+
+$result = $pdo->exec($sql);
 ~~~
 
 `PDO::query()` prépare et execute une requête SQL **en un seul appel** de fonction et retourne un objet de type `PDOStatement`. Cet objet contient les méthodes nécessaires pour consulter la requête initiale, les résultats, les erreurs, etc.
 
+~~~php
+$stmt = $pdo->query("SELECT id, title, body FROM Article");
+~~~
+
+## Parcourir les résultats
+
+On peut parcourir les résultats à l'aide des méthodes `PDOStatement::fetch()` ou `PDOStatement::fetchAll()` :
+
+~~~php
+$firstRow = $stmt->fetch();
+$remainingRows = $stmt->fetchAll();
+~~~
+
+Ou alors en itérant sur l'objet `PDOStatement` directement (car il implémente l'interface `IteratorAggregate`) :
+
+~~~php
+foreach ($stmt as $row) {
+    echo $row['title'] . "\t";
+    echo $row['body'] . "\t";
+    echo $row['id'] . PHP_EOL;
+}
+~~~
 
 ## Executer des requêtes préparées (en deux temps)
 
 
-`PDO::prepare()`
+`PDO::prepare()` permet de préparer une requête *paramétrée* :
+
+~~~php
+$stmt = $pdo->prepare('SELECT id, title, body FROM Article WHERE title = :title AND id = :id');
+$stmt->execute(['title' => 'Foo', 'id' => 1]);
+~~~
+
+Ou avec `bindValue()` :
+
+~~~php
+$stmt = $pdo->prepare('SELECT id, title, body FROM Article WHERE title = :title AND id = :id');
+$stmt->bindValue('title', 'Foo');
+$stmt->bindValue('id', 1);
+$stmt->execute();
+~~~
+
+> Le paramètre peut être nommé ou interrogatif (?). Voir la documentation
 
 
 ## Utiliser les transactions
@@ -95,20 +143,19 @@ Pour consulter les résultats, l'objet de type `PDOStatement` offre plusieurs **
 [Les méthodes de `PDO`](https://www.php.net/manual/fr/class.pdo.php) **à connaître** :
 
 - `exec()`;
-- `query()`, retourne un `PDOStatement`;
-- `prepare()`, retourne un `PDOStatement`;
+- `query()` : **Prépare** et **exécute** une requête SQL. Retourne un `PDOStatement` contenant les résultats;
+- `prepare()` : **Prépare** une requête SQL. Retourne un `PDOStatement`;
 - `commit()`;
 - `rollback()`.
 
 [Les méthodes de `PDOStatement`](https://www.php.net/manual/fr/class.pdostatement.php) **à connaître** :
 
-- `bindColumn()`;
-- `bindParam()`;
-- `bindValue()`;
-- `execute()`;
-- `fetch()`;
-- `fetchAll()`;
-- `fetchObject()`.
+- `bindValue()` : Associe une *valeur* à un paramètre (nommé ou interrogatif(`?`));
+- `bindParam()` : Lie une variable PHP (référence) à un marqueur nommé ou interrogatif. Contrairement à `bindValue()`, la variable est liée en tant que référence et ne sera évaluée qu'au moment de l'appel à la fonction `execute()`.  (utile pour les procédures stockées qui retourne un résultat `INOUT`);
+- `bindColumn()` : Lie une variable PHP (référence) à une colonne (par nom ou position). Chaque appel à `fetch` met à jour la variable;
+- `execute()` : Exécute une requête préparée;
+- `fetch()` : Récupère la ligne *suivante* d'un jeu de résultats PDO;
+- `fetchAll()` : Récupère les lignes *restantes* d'un ensemble de résultats;
 
 [Les modes de récupération (constantes)](https://www.php.net/manual/fr/pdo.constants.php) **à connaître** :
 
@@ -116,10 +163,13 @@ Pour consulter les résultats, l'objet de type `PDOStatement` offre plusieurs **
 - `PDO::FETCH_ASSOC`;
 - `PDO::FETCH_UNIQUE`;
 - `PDO::FETCH_CLASS` (ORM);
+- `PDO::FETCH_FUNC` (mapping);
 
 ## Références
 
 - [PHP Data Objects](https://www.php.net/manual/fr/book.pdo.php);
 - [Constantes pré-définies par le module PDO](https://www.php.net/manual/fr/pdo.constants.php), documente notamment les différents modes de récupération des données (`FETCH_*`);
+- [PDOStatement::fetch](https://www.php.net/manual/en/pdostatement.fetch.php#example-1053), documentation des différents modes de récupération des données;
 - [Connexions et gestionnaire de connexion](https://www.php.net/manual/fr/pdo.connections.php), documentation sur la gestion des connexions notamment des [connexions persistantes](https://www.php.net/manual/fr/pdo.constants.php#pdo.constants.attr-persistent);
+- [(The only proper) PDO tutorial](https://phpdelusions.net/pdo), un très bon site (maintenu) qui propose des tutoriels pour mieux comprendre le module PDO (la documentation n'est en effet pas toujours complète et explicite sur les différents paramètres du module);
 - [SQLite - Documentation](https://www.sqlite.org/docs.html)
