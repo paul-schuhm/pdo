@@ -6,9 +6,9 @@ Une démo de l'extension PDO en PHP pour interagir avec des bases de données re
   - [Installation](#installation)
   - [Ouvrir une connexion (avec SQLite)](#ouvrir-une-connexion-avec-sqlite)
   - [Classes de l'extension PDO](#classes-de-lextension-pdo)
-  - [Executer des requêtes SQL](#executer-des-requêtes-sql)
+  - [Exécuter des requêtes SQL](#exécuter-des-requêtes-sql)
   - [Parcourir les résultats](#parcourir-les-résultats)
-  - [Executer des requêtes préparées (en deux temps)](#executer-des-requêtes-préparées-en-deux-temps)
+  - [Exécuter des requêtes préparées (en deux temps)](#exécuter-des-requêtes-préparées-en-deux-temps)
   - [Utiliser les transactions](#utiliser-les-transactions)
   - [Accéder à la démo](#accéder-à-la-démo)
   - [En résumé](#en-résumé)
@@ -49,12 +49,12 @@ sqlite:/path/to/database.sq3
 L'extension `pdo` définit les classes suivantes **à connaître** :
 
 - `PDO` : Représente une connexion entre PHP et un serveur de base de données;
-- `PDOStatement` : Représente une requête préparée et, une fois exécutée, le jeu de résultats associé. Retourné par [`PDO::query()`](https://www.php.net/manual/fr/pdo.query.php)
+- `PDOStatement` : Représente une requête préparée et, une fois exécutée, le jeu de résultats associé. Retourné par [`PDO::query()`](https://www.php.net/manual/fr/pdo.query.php) et [`PDO::prepare()`](https://www.php.net/manual/fr/pdo.prepare.php);
 - `PDOException` : Représente une erreur émise par PDO. **Vous ne devez pas lancer une exception PDOException depuis votre propre code**, seulement les gérer.
 
-## Executer des requêtes SQL
+## Exécuter des requêtes SQL
 
-`PDO::exec()` exécute une requête SQL dans un appel d'une seule fonction, retourne le nombre de lignes affectées par la requête. **Ne retourne pas de résultat** pour une requête `SELECT`. Pour cela, utiliser `PDO::query()`.
+`PDO::exec()` exécute une requête SQL dans un appel d'une seule fonction, **retourne le nombre de lignes affectées** par la requête. **Ne retourne pas de résultats** pour une requête `SELECT`. Pour cela, il faut utiliser `PDO::query()`.
 
 ~~~php
 $result = $pdo->exec("CREATE TABLE IF NOT EXISTS Article(id INT, title VARCHAR(255), body TEXT)");
@@ -69,7 +69,7 @@ SQL;
 $result = $pdo->exec($sql);
 ~~~
 
-`PDO::query()` prépare et execute une requête SQL **en un seul appel** de fonction et retourne un objet de type `PDOStatement`. Cet objet contient les méthodes nécessaires pour consulter la requête initiale, les résultats, les erreurs, etc.
+`PDO::query()` **prépare et execute** une requête SQL **en un seul appel** de fonction et retourne un objet de type `PDOStatement`. Cet objet contient les méthodes nécessaires pour consulter la requête initiale, les résultats, les erreurs, etc.
 
 ~~~php
 $stmt = $pdo->query("SELECT id, title, body FROM Article");
@@ -77,7 +77,7 @@ $stmt = $pdo->query("SELECT id, title, body FROM Article");
 
 ## Parcourir les résultats
 
-On peut parcourir les résultats à l'aide des méthodes `PDOStatement::fetch()` ou `PDOStatement::fetchAll()` :
+Une fois la requête exécutée, on peut parcourir les résultats à l'aide des méthodes `PDOStatement::fetch()` ou `PDOStatement::fetchAll()` :
 
 ~~~php
 $firstRow = $stmt->fetch();
@@ -94,7 +94,7 @@ foreach ($stmt as $row) {
 }
 ~~~
 
-## Executer des requêtes préparées (en deux temps)
+## Exécuter des requêtes préparées (en deux temps)
 
 
 `PDO::prepare()` permet de préparer une requête *paramétrée* :
@@ -126,6 +126,8 @@ $pdo->exec("INSERT INTO Article(id, title, body) VALUES (5, 'Baz', 'Lorem ipsum'
 $pdo->exec("INSERT INTO Article(id, title, body) VALUES (6, 'Baz', 'Lorem ipsum')");
 $pdo->commit();
 ~~~
+
+> [En savoir plus sur les transactions](https://www.php.net/manual/fr/pdo.transactions.php).
 
 ## Accéder à la démo
 

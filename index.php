@@ -176,9 +176,11 @@ var_dump($stmt->fetchAll());
 echo "*Transactions" . PHP_EOL;
 
 //Commit (validé les requêtes dans une transaction : tout ou rien)
+//beginTransaction() désactive le mode autocommit
 $pdo->beginTransaction();
 $pdo->exec("INSERT INTO Article(id, title, body) VALUES (5, 'Baz', 'Lorem ipsum')");
 $pdo->exec("INSERT INTO Article(id, title, body) VALUES (6, 'Baz', 'Lorem ipsum')");
+//commit() valide la transaction et execute les requêtes (avec possibles mises en place de lock). Réactive le mode autocommit
 $pdo->commit();
 
 
@@ -190,6 +192,7 @@ var_dump($results);
 $pdo->beginTransaction();
 $pdo->exec("INSERT INTO Article(id, title, body) VALUES (7, 'Baz', 'Lorem ipsum')");
 $pdo->exec("INSERT INTO Article(id, title, body) VALUES (8, 'Baz', 'Lorem ipsum')");
+//rollBack() réactive le mode autocommit
 $pdo->rollBack();
 
 $stmt->execute();
