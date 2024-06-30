@@ -118,6 +118,14 @@ $stmt->execute();
 
 ## Utiliser les transactions
 
+Par défaut, PDO s’exécute en mode `autocommit`, chaque requête est implicitement une transaction. Pour initialiser une transaction, il faut utiliser la méthode `PDO::beginTransaction()`. Ensuite effectuer les requêtes contenues dans la transaction puis la terminer avec la méthode `PDO::commit()` ou l'annuler avec la méthode `PDO::rollback()`
+
+~~~php
+$pdo->beginTransaction();
+$pdo->exec("INSERT INTO Article(id, title, body) VALUES (5, 'Baz', 'Lorem ipsum')");
+$pdo->exec("INSERT INTO Article(id, title, body) VALUES (6, 'Baz', 'Lorem ipsum')");
+$pdo->commit();
+~~~
 
 ## Accéder à la démo
 
@@ -145,8 +153,9 @@ Pour consulter les résultats, l'objet de type `PDOStatement` offre plusieurs **
 - `exec()`;
 - `query()` : **Prépare** et **exécute** une requête SQL. Retourne un `PDOStatement` contenant les résultats;
 - `prepare()` : **Prépare** une requête SQL. Retourne un `PDOStatement`;
-- `commit()`;
-- `rollback()`.
+- `beginTransaction()` : Ouvre une transaction;
+- `commit()` : Valide la transaction;
+- `rollback()` : Annule la transaction.
 
 [Les méthodes de `PDOStatement`](https://www.php.net/manual/fr/class.pdostatement.php) **à connaître** :
 
@@ -155,7 +164,7 @@ Pour consulter les résultats, l'objet de type `PDOStatement` offre plusieurs **
 - `bindColumn()` : Lie une variable PHP (référence) à une colonne (par nom ou position). Chaque appel à `fetch` met à jour la variable;
 - `execute()` : Exécute une requête préparée;
 - `fetch()` : Récupère la ligne *suivante* d'un jeu de résultats PDO;
-- `fetchAll()` : Récupère les lignes *restantes* d'un ensemble de résultats;
+- `fetchAll()` : Récupère les lignes *restantes* d'un ensemble de résultats.
 
 [Les modes de récupération (constantes)](https://www.php.net/manual/fr/pdo.constants.php) **à connaître** :
 
@@ -163,7 +172,7 @@ Pour consulter les résultats, l'objet de type `PDOStatement` offre plusieurs **
 - `PDO::FETCH_ASSOC`;
 - `PDO::FETCH_UNIQUE`;
 - `PDO::FETCH_CLASS` (ORM);
-- `PDO::FETCH_FUNC` (mapping);
+- `PDO::FETCH_FUNC` (mapping des résultats via une callback).
 
 ## Références
 
@@ -171,5 +180,6 @@ Pour consulter les résultats, l'objet de type `PDOStatement` offre plusieurs **
 - [Constantes pré-définies par le module PDO](https://www.php.net/manual/fr/pdo.constants.php), documente notamment les différents modes de récupération des données (`FETCH_*`);
 - [PDOStatement::fetch](https://www.php.net/manual/en/pdostatement.fetch.php#example-1053), documentation des différents modes de récupération des données;
 - [Connexions et gestionnaire de connexion](https://www.php.net/manual/fr/pdo.connections.php), documentation sur la gestion des connexions notamment des [connexions persistantes](https://www.php.net/manual/fr/pdo.constants.php#pdo.constants.attr-persistent);
+- [PDO : Les erreurs et leur gestion](https://www.php.net/manual/fr/pdo.error-handling.php)
 - [(The only proper) PDO tutorial](https://phpdelusions.net/pdo), un très bon site (maintenu) qui propose des tutoriels pour mieux comprendre le module PDO (la documentation n'est en effet pas toujours complète et explicite sur les différents paramètres du module);
 - [SQLite - Documentation](https://www.sqlite.org/docs.html)

@@ -68,20 +68,21 @@ foreach ($stmt as $row) {
     print $row['id'] . "\n";
 }
 
-//A chaque fois que fetch ou fetchAll est appelé, l'itérateur sur l'ensemble des résultats avance.
-//Aussi, il n'est pas possible d'accéder deux fois de suite aux résultats via fetch ou fetchAll.
-//Il faut refaire la requête.
 
 echo "*fetchAll(PDO::FETCH_OBJ)" . PHP_EOL;
 
-
+//A chaque fois que fetch ou fetchAll est appelé, l'itérateur sur l'ensemble des résultats avance.
+//Aussi, il n'est pas possible d'accéder deux fois de suite aux résultats via fetch ou fetchAll.
+//Pour reparcourir les résultats si besoin, il faut refaire la requête.
 $stmt->execute();
+
 //PDO::FETCH_OBJ retourne chaque ligne sous forme d'objet de type stdClass (objet anonyme).
 foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $row) {
     print_r($row);
 }
 
 echo "*fetchAll(PDO::FETCH_UNIQUE)" . PHP_EOL;
+
 //PDO::FETCH_UNIQUE récupère uniquement les valeurs uniques. L'unicité est déterminée par la valeur
 //de la PREMIERE COLONNE
 $stmt = $pdo->query("SELECT title, id, body FROM Article");
@@ -91,11 +92,10 @@ foreach ($stmt->fetchAll(PDO::FETCH_UNIQUE) as $row) {
 
 echo "*fetchAll(PDO::FETCH_CLASS)" . PHP_EOL;
 
-//Pour charger instancier des objets directement à partir des données tabulaires (ORM !)
+//Mode PDO::FETCH_CLASS pour instancier des objets directement à partir des données tabulaires (ORM !)
 
 class Article
 {
-
     private int $id;
     private string $title;
     private string $body;
@@ -169,5 +169,51 @@ var_dump($stmt->fetchAll());
 $stmt = $pdo->prepare('SELECT id, title, body FROM Article WHERE title = :title AND id = :id');
 $stmt->bindValue('title', 'Foo');
 $stmt->bindValue('id', 1);
+$stmt->execute();
+var_dump($stmt->fetchAll());
+
+
+echo "*Transactions" . PHP_EOL;
+
+//Commit (validé les requêtes dans une transaction : tout ou rien)
+$pdo->beginTransaction();
+$pdo->exec("INSERT INTO Article(id, title, body) VALUES (5, 'Baz', 'Lorem ipsum')");
+$pdo->exec("INSERT INTO Article(id, title, body) VALUES (6, 'Baz', 'Lorem ipsum')");
+$pdo->commit();
+
+
+$stmt = $pdo->query("SELECT id, title, body FROM Article");
+$results = $stmt->fetchAll();
+var_dump($results);
+
+//Rollback (annuler toutes les requêtes de la transaction)
+$pdo->beginTransaction();
+$pdo->exec("INSERT INTO Article(id, title, body) VALUES (7, 'Baz', 'Lorem ipsum')");
+$pdo->exec("INSERT INTO Article(id, title, body) VALUES (8, 'Baz', 'Lorem ipsum')");
+$pdo->rollBack();
+
+$stmt->execute();
+var_dump($stmt->fetchAll());
+
+
+echo "*Exceptions" . PHP_EOL;
+
+//À partir de PHP 8.0.0, PDO::ERRMODE_EXCEPTION est le mode par défaut : une exception PDOException est
+//levée dès qu'une erreur SQL se produit. 
+//Pour modifier le mode d'exception, modifier l'attribut PDO::ATTR_ERRMODE via la méthode suivante : $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_*);
+
+try {
+    $pdo->beginTransaction();
+    //Cette requête ne contient pas d'erreur
+    $pdo->exec("INSERT INTO Article(id, title, body) VALUES (12, 'Foo', 'Lorem ipsum')");
+    //Cette requête contient une erreur
+    $pdo->exec("INSERT INTO Article(id, title, body) VALUES ('Baz', 'Lorem ipsum')");
+    $pdo->commit();
+} catch (PDOException $exception) {
+    echo "PDOException, message = {$exception->getMessage()}";
+    //Annuler toutes les requêtes de la transaction si une seule d'entre elles déclenche une erreur
+    $pdo->rollBack();
+}
+
 $stmt->execute();
 var_dump($stmt->fetchAll());
